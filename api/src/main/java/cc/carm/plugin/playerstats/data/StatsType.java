@@ -1,25 +1,28 @@
 package cc.carm.plugin.playerstats.data;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class StatsType<T> implements Comparable<StatsType<T>> {
+import java.util.Comparator;
+
+public abstract class StatsType<T> implements Comparator<T> {
 
     protected final int id;
     protected final String key;
 
-    protected final List<String> description;
-
     protected final Class<T> valueClass;
     protected final T defaultValue;
 
-    public StatsType(int id, String key, List<String> description,
-                     Class<T> valueClass, T defaultValue) {
+    protected StatsType(int id, String key, Class<T> valueClass, T defaultValue) {
         this.id = id;
         this.key = key;
-        this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
     }
+
+    public abstract @NotNull T parse(@NotNull String data) throws Exception;
+
+    public abstract @Nullable String serialize(@NotNull T data);
 
     public int id() {
         return id;
@@ -27,10 +30,6 @@ public abstract class StatsType<T> implements Comparable<StatsType<T>> {
 
     public String key() {
         return key;
-    }
-
-    public List<String> description() {
-        return description;
     }
 
     public Class<T> valueClass() {

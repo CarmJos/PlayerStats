@@ -1,5 +1,6 @@
 package cc.carm.plugin.playerstats.manager;
 
+import cc.carm.plugin.playerstats.data.StatsType;
 import cc.carm.plugin.playerstats.user.UserKey;
 
 import java.util.LinkedHashMap;

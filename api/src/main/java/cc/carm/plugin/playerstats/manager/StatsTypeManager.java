@@ -1,5 +1,6 @@
 package cc.carm.plugin.playerstats.manager;
 
+import cc.carm.plugin.playerstats.data.StatsType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -11,7 +12,8 @@ public interface StatsTypeManager {
 
     /**
      * 得到该服务端所有已注册的战绩类型
-     *F
+     * F
+     *
      * @return 战绩类型列表
      */
     @Unmodifiable

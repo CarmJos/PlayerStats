@@ -1,43 +1,25 @@
 package cc.carm.plugin.playerstats.user;
 
-import cc.carm.lib.minecraft.common.bukkit.BukkitCommonAPI;
-import cc.carm.lib.minecraft.common.user.User;
-import cc.carm.lib.minecraft.common.user.data.UserDataHandler;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import cc.carm.plugin.playerstats.data.StatsType;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-public interface StatsAccount extends UserDataHandler {
-
-    static @Nullable StatsAccount get(@NotNull UUID userUUID) {
-        return UserDataHandler.get(userUUID, StatsAccount.class);
-    }
-
-    static @Nullable StatsAccount get(@NotNull UserKey user) {
-        return UserDataHandler.get(user, StatsAccount.class);
-    }
-
-    static @NotNull StatsAccount get(@NotNull Player player) {
-        return BukkitCommonAPI.getUserManager().get(player).getHandler(StatsAccount.class);
-    }
+public interface StatsAccount {
 
     /**
      * 得到缓存的全部战绩类型数据
      *
      * @return StatsType, Integer
      */
-    Map<StatsType, Integer> getStatsCache();
+    Map<StatsType<?>, Integer> getStatsCache();
 
     /**
      * 得到当前新修改的，且没有保存到数据库中的战绩类型。
      *
      * @return 战绩类型Set
      */
-    Set<StatsType> getEditedTypes();
+    Set<StatsType<?>> getEditedTypes();
 
     /**
      * 判断玩家是否还有已被修改的数据没有写入到数据库中。
