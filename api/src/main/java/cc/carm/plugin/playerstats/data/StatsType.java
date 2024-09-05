@@ -1,11 +1,44 @@
 package cc.carm.plugin.playerstats.data;
 
-/**
- * 战绩类型
- *
- * @param id          该战绩类型的ID，用于存储数据。
- * @param key         该战绩类型的访问键，用于以可读的方式获取该战绩类型。
- *                    一般遵守 “类型:子类”格式，如“KILLS:PLAYER”(击败玩家数）
- * @param description 简单描述该战绩类型的作用。
- * @author CarmJos
- */
+import java.util.List;
+
+public abstract class StatsType<T> implements Comparable<StatsType<T>> {
+
+    protected final int id;
+    protected final String key;
+
+    protected final List<String> description;
+
+    protected final Class<T> valueClass;
+    protected final T defaultValue;
+
+    public StatsType(int id, String key, List<String> description,
+                     Class<T> valueClass, T defaultValue) {
+        this.id = id;
+        this.key = key;
+        this.description = description;
+        this.valueClass = valueClass;
+        this.defaultValue = defaultValue;
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public String key() {
+        return key;
+    }
+
+    public List<String> description() {
+        return description;
+    }
+
+    public Class<T> valueClass() {
+        return valueClass;
+    }
+
+    public T defaultValue() {
+        return defaultValue;
+    }
+
+}

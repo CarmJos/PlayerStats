@@ -17,13 +17,14 @@ public interface StatsAccount extends UserDataHandler {
         return UserDataHandler.get(userUUID, StatsAccount.class);
     }
 
-    static @Nullable StatsAccount get(@NotNull User user) {
+    static @Nullable StatsAccount get(@NotNull UserKey user) {
         return UserDataHandler.get(user, StatsAccount.class);
     }
 
     static @NotNull StatsAccount get(@NotNull Player player) {
         return BukkitCommonAPI.getUserManager().get(player).getHandler(StatsAccount.class);
     }
+
     /**
      * 得到缓存的全部战绩类型数据
      *

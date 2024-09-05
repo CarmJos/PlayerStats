@@ -53,7 +53,7 @@
         <system>GitHub Actions</system>
         <url>https://github.com/CarmJos/PlayerStats/actions/workflows/maven.yml</url>
     </ciManagement>
-    
+
     <build>
         <plugins>
             <plugin>
