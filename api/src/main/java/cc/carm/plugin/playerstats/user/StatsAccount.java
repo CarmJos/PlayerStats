@@ -1,6 +1,6 @@
 package cc.carm.plugin.playerstats.user;
 
-import cc.carm.plugin.playerstats.data.StatsType;
+import cc.carm.plugin.playerstats.data.StatType;
 
 import java.util.Map;
 import java.util.Set;
@@ -12,14 +12,14 @@ public interface StatsAccount {
      *
      * @return StatsType, Integer
      */
-    Map<StatsType<?>, Integer> getStatsCache();
+    Map<StatType, Integer> cache();
 
     /**
      * 得到当前新修改的，且没有保存到数据库中的战绩类型。
      *
      * @return 战绩类型Set
      */
-    Set<StatsType<?>> getEditedTypes();
+    Set<StatType> modifiedTypes();
 
     /**
      * 判断玩家是否还有已被修改的数据没有写入到数据库中。
@@ -37,53 +37,52 @@ public interface StatsAccount {
     /**
      * 从该账户缓存中移除战绩类型的数据
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      */
-    void removeCache(StatsType statsType);
+    void removeCache(StatType statType);
 
     /**
      * 从数据库中更新某种战绩类型的数值
      * 该方法应当异步执行。
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      */
-    void updateCache(StatsType statsType);
-
+    void updateCache(StatType statType);
 
     /**
      * 设置账户中某种战绩类型的数量
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      * @param value     数量
      */
-    boolean setValue(StatsType statsType, int value);
+    boolean setValue(StatType statType, int value);
 
     /**
      * 从账户中减少一定数量的战绩类型。
      * 请判断是否成功！
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      * @param value     数量
      * @return 是否成功
      */
-    boolean decreaseValue(StatsType statsType, int value);
+    boolean decreaseValue(StatType statType, int value);
 
     /**
      * 向账户中添加一定数量的战绩类型。
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      * @param value     数量
      * @return 是否成功
      */
-    boolean increaseValue(StatsType statsType, int value);
+    boolean increaseValue(StatType statType, int value);
 
     /**
      * 得到该账户缓存中战绩类型的数量。
      *
-     * @param statsType 战绩类型
+     * @param statType 战绩类型
      * @return 数量
      */
-    int getStatsValue(StatsType statsType);
+    int getStatsValue(StatType statType);
 
 
 }

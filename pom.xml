@@ -9,6 +9,9 @@
         <maven.compiler.target>${project.jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+
+        <project.package>cc.carm.plugin.playerstats</project.package>
+
     </properties>
     <groupId>cc.carm.plugin</groupId>
     <artifactId>playerstats-parent</artifactId>
@@ -36,16 +39,6 @@
                 <role>Main Developer</role>
                 <role>Designer</role>
             </roles>
-        </developer>
-        <developer>
-            <id>Ghost-Chu</id>
-            <name>鬼畜</name>
-            <url>https://github.com/Ghost-Chu/</url>
-        </developer>
-        <developer>
-            <id>huanmeng_qwq</id>
-            <name>幻梦</name>
-            <url>https://github.com/huanmeng-qwq/</url>
         </developer>
     </developers>
 
@@ -163,11 +156,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.3.2</version>
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.basedir}/.asset/</directory>
+                            <directory>${project.basedir}/.asset</directory>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/api-docs/</directory>
                             <useDefaultExcludes>true</useDefaultExcludes>
                             <includes>
                                 <include>**/*</include>

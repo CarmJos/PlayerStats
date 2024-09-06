@@ -1,15 +1,8 @@
 package cc.carm.plugin.playerstats.manager;
 
-import cc.carm.lib.easyplugin.utils.MessageUtils;
 import cc.carm.lib.easysql.api.SQLQuery;
 import cc.carm.lib.easysql.api.SQLTable;
-import cc.carm.lib.minecraft.common.MineCommonAPI;
-import cc.carm.lib.minecraft.common.bukkit.BukkitCommonAPI;
-import cc.carm.lib.minecraft.common.exception.handler.HandlerOnRegisterException;
-import cc.carm.lib.minecraft.common.exception.handler.HandlerRegisteredException;
-import cc.carm.service.essentials.bukkit.Main;
-import cc.carm.service.essentials.bukkit.api.stats.StatsType;
-import cc.carm.service.essentials.bukkit.data.DataTables;
+import cc.carm.plugin.playerstats.data.StatType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,34 +15,16 @@ import java.util.Set;
 
 public class UserStatsManager implements StatsManager {
 
-    Set<StatsType> statsTypes = new HashSet<>();
-
-    public UserStatsManager(Main plugin) {
-        plugin.log("  加载现有战绩类型...");
-        int i = updateStatsTypes(); // 从数据库中读取所有货币
-        plugin.log("  从数据库中加载了 " + i + " 种类型");
-
-        plugin.log("  注册用户战绩管理器");
-        try {
-            BukkitCommonAPI.getUserManager().registerHandler(plugin, UserStatsAccount.class);
-        } catch (HandlerRegisteredException | HandlerOnRegisterException e) {
-            e.printStackTrace();
-        }
-
-        plugin.log("  注册变量...");
-        if (MessageUtils.hasPlaceholderAPI()) {
-            new StatsExpansion(plugin).register();
-        }
-    }
+    Set<StatType> statTypes = new HashSet<>();
 
     @Override
-    public @NotNull Set<StatsType> getStatsTypes() {
-        return Collections.unmodifiableSet(statsTypes);
+    public @NotNull Set<StatType> registry() {
+        return Collections.unmodifiableSet(statTypes);
     }
 
     @Override
     public int updateStatsTypes() {
-        Set<StatsType> data = new HashSet<>();
+        Set<StatType> data = new HashSet<>();
         try (SQLQuery query = getTypesTable().createQuery().build().execute()) {
             ResultSet result = query.getResultSet();
             while (result.next()) {
@@ -58,8 +33,8 @@ public class UserStatsManager implements StatsManager {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        this.statsTypes = data;
-        return this.statsTypes.size();
+        this.statTypes = data;
+        return this.statTypes.size();
     }
 
     @Override
@@ -69,7 +44,7 @@ public class UserStatsManager implements StatsManager {
                 .setLimit(1).build().execute()) {
             ResultSet result = query.getResultSet();
             if (result.next()) {
-                StatsType type = readStatsType(result);
+                StatType type = readStatsType(result);
                 removeStatsType(type); // Remove old currency
                 addStatsType(type);
             }
@@ -79,8 +54,8 @@ public class UserStatsManager implements StatsManager {
     }
 
     @Override
-    public @NotNull StatsType createStatsType(@NotNull String key, String name, @Nullable String description) throws Exception {
-        StatsType registered = getStatsType(key);
+    public @NotNull StatType createStatsType(@NotNull String key, String name, @Nullable String description) throws Exception {
+        StatType registered = getStatsType(key);
         if (registered != null) return registered;
 
         int id = getTypesTable().createReplace()
@@ -88,42 +63,42 @@ public class UserStatsManager implements StatsManager {
                 .setParams(key, name, description)
                 .returnGeneratedKey().execute();
 
-        StatsType type = new StatsType(id, key, name, description);
+        StatType type = new StatType(id, key, name, description);
         MineCommonAPI.getRedisManager().publishAsync("stats.type.create", d -> d.writeInt(type.id()));
-        this.statsTypes.add(type);
+        this.statTypes.add(type);
         return type;
     }
 
     @Override
-    public boolean addStatsType(@NotNull StatsType statsType) {
-        if (hasStatsType(statsType.id()) || hasStatsType(statsType.key())) return false;
-        this.statsTypes.add(statsType);
+    public boolean addStatsType(@NotNull StatType statType) {
+        if (hasStatsType(statType.id()) || hasStatsType(statType.key())) return false;
+        this.statTypes.add(statType);
         return true;
     }
 
     @Override
-    public void removeStatsType(@NotNull StatsType statsType) {
-        this.statsTypes.removeIf(c -> c.id() == statsType.id() || c.key().equalsIgnoreCase(statsType.key()));
+    public void removeStatsType(@NotNull StatType statType) {
+        this.statTypes.removeIf(c -> c.id() == statType.id() || c.key().equalsIgnoreCase(statType.key()));
     }
 
     @Override
-    public StatsType getStatsType(int id) {
-        return this.statsTypes.stream().filter(c -> c.id() == id).findFirst().orElse(null);
+    public StatType getStatsType(int id) {
+        return this.statTypes.stream().filter(c -> c.id() == id).findFirst().orElse(null);
     }
 
     @Override
-    public StatsType getStatsType(@NotNull String key) {
-        return this.statsTypes.stream().filter(c -> c.key().equalsIgnoreCase(key)).findFirst().orElse(null);
+    public StatType getStatsType(@NotNull String key) {
+        return this.statTypes.stream().filter(c -> c.key().equalsIgnoreCase(key)).findFirst().orElse(null);
     }
 
     @Override
     public boolean hasStatsType(@NotNull String key) {
-        return this.statsTypes.stream().anyMatch(c -> c.key().equalsIgnoreCase(key));
+        return this.statTypes.stream().anyMatch(c -> c.key().equalsIgnoreCase(key));
     }
 
     @Override
     public boolean hasStatsType(int id) {
-        return this.statsTypes.stream().anyMatch(c -> c.id() == id);
+        return this.statTypes.stream().anyMatch(c -> c.id() == id);
     }
 
 
@@ -138,7 +113,7 @@ public class UserStatsManager implements StatsManager {
     }
 
     @Override
-    public LinkedHashMap<Long, Integer> getOrderedAccounts(StatsType stats, int limit) {
+    public LinkedHashMap<Long, Integer> getOrderedAccounts(StatType stats, int limit) {
         LinkedHashMap<Long, Integer> data = new LinkedHashMap<>();
         try (SQLQuery query = MineCommonAPI.getSQLRegistry().get().createQuery().withPreparedSQL(
                 "SELECT * FROM " + DataTables.STATS_ACCOUNT.getTableName() + " " +
@@ -155,8 +130,8 @@ public class UserStatsManager implements StatsManager {
         return data;
     }
 
-    protected StatsType readStatsType(ResultSet result) throws SQLException {
-        return new StatsType(
+    protected StatType readStatsType(ResultSet result) throws SQLException {
+        return new StatType(
                 result.getInt("id"),
                 result.getString("key"),
                 result.getString("name"),

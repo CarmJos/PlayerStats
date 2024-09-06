@@ -55,7 +55,7 @@ public class UserStatsAccount extends AbstractDataHandler implements StatsAccoun
     }
 
     @Override
-    public Map<StatsType, Integer> getStatsCache() {
+    public Map<StatsType, Integer> cache() {
         Map<StatsType, Integer> data = new HashMap<>();
 
         for (Map.Entry<Integer, Integer> entry : this.statsCache.entrySet()) {
@@ -67,7 +67,7 @@ public class UserStatsAccount extends AbstractDataHandler implements StatsAccoun
     }
 
     @Override
-    public Set<StatsType> getEditedTypes() {
+    public Set<StatsType> modifiedTypes() {
         Set<StatsType> types = new HashSet<>();
         for (Integer id : this.modifiedStats) {
             StatsType statsType = MineEssentialsAPI.getStatsManager().getStatsType(id);

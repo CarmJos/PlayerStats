@@ -18,9 +18,10 @@
 
         <deps.mineconfig.version>2.9.3</deps.mineconfig.version>
         <deps.easyplugin.version>1.5.12</deps.easyplugin.version>
+        <deps.minesql.version>1.4.0</deps.minesql.version>
     </properties>
     <artifactId>playerstats-plugin</artifactId>
-    
+
     <name>PlayerStats</name>
 
     <developers>
@@ -59,6 +60,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>playerstats-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cc.carm.plugin</groupId>
+            <artifactId>minesql-api</artifactId>
+            <version>${deps.minesql.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -104,6 +112,68 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>${project.name}-${project.version}</finalName>
+                    <outputDirectory>${project.basedir}/.asset/</outputDirectory>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <minimizeJar>true</minimizeJar>
+                    <relocations>
+                        <relocation>
+                            <pattern>cc.carm.lib.easyplugin</pattern>
+                            <shadedPattern>${project.package}.lib.easyplugin</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>cc.carm.lib.mineconfiguration</pattern>
+                            <shadedPattern>${project.package}.lib.configuration</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>cc.carm.lib.configuration</pattern>
+                            <shadedPattern>${project.package}.lib.configuration</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>cc.carm.lib.yamlcommentupdater</pattern>
+                            <shadedPattern>${project.package}.lib.configuration.yml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>${project.package}.lib.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.json</pattern>
+                            <shadedPattern>${project.package}.lib.json</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>de.themoep.minedown</pattern>
+                            <shadedPattern>${project.package}.lib.minedown</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>${project.package}.lib.xseries</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/MAN IFEST.MF</exclude>
+                                <exclude>META-INF/*.txt</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
             </plugin>
         </plugins>
     </build>
